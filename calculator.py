@@ -209,6 +209,7 @@ class CalculatorApp:
                 try:
                     expr = sp.sympify(inner, locals=locals_map)
                     self.current_expression = str(sp.diff(expr, symb))
+                    self.last_answer = self.current_expression
                 except:
                     self.current_expression = 'Error'
                 return self.update_labels()
@@ -226,14 +227,16 @@ class CalculatorApp:
                 try:
                     expr = sp.sympify(inner, locals=locals_map)
                     self.current_expression = str(sp.integrate(expr, symb))
+                    self.last_answer = self.current_expression
                 except:
                     self.current_expression = 'Error'
                 return self.update_labels()
 
         # numeric, trig, inverse-trig, factorial, etc.
         expr = (full.replace('^', '**')
-                    .replace('π', str(math.pi))
-                    .replace('e', str(math.e)))
+                    .replace('π', str(math.pi)))
+        # replace constant e without touching words like 'exp' or scientific notation
+        expr = re.sub(r'(?<![\w])e(?![\w])', str(math.e), expr)
         expr = re.sub(r'(\d+)!', r'math.factorial(\1)', expr)
         expr = expr.replace('sqrt(-1)', '(0+1j)')
 
