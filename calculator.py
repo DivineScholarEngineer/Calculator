@@ -28,7 +28,8 @@ class CalculatorApp:
         self.current_expression = ""
         self.total_expression   = ""
         self.last_answer        = None
-        self.operations         = {'*':'×', '/':'÷', '**':'^'}
+        # ensure exponent operator is replaced before multiplication
+        self.operations         = {'**':'^', '*':'×', '/':'÷'}
 
         # UI setup
         self.display_frame = self.create_display_frame()
@@ -121,14 +122,16 @@ class CalculatorApp:
         try:
             v = float(self.current_expression)
             self.current_expression = str(v * v)
-        except:
+            self.last_answer = self.current_expression
+        except Exception:
             self.current_expression = 'Error'
         self.update_label()
 
     def sqrt(self):
         try:
             self.current_expression = str(eval(self.current_expression + '**0.5'))
-        except:
+            self.last_answer = self.current_expression
+        except Exception:
             self.current_expression = 'Error'
         self.update_label()
 
@@ -210,7 +213,7 @@ class CalculatorApp:
                     expr = sp.sympify(inner, locals=locals_map)
                     self.current_expression = str(sp.diff(expr, symb))
                     self.last_answer = self.current_expression
-                except:
+                except Exception:
                     self.current_expression = 'Error'
                 return self.update_labels()
 
@@ -228,7 +231,7 @@ class CalculatorApp:
                     expr = sp.sympify(inner, locals=locals_map)
                     self.current_expression = str(sp.integrate(expr, symb))
                     self.last_answer = self.current_expression
-                except:
+                except Exception:
                     self.current_expression = 'Error'
                 return self.update_labels()
 
@@ -266,7 +269,7 @@ class CalculatorApp:
             val = eval(expr)
             self.current_expression = str(val)
             self.last_answer        = self.current_expression
-        except:
+        except Exception:
             self.current_expression = 'Error'
 
         self.update_labels()
